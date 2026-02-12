@@ -4,7 +4,7 @@ A simple static web page for exploring CloudTrail JSON logs locally.
 
 ## Why?
 
-Because CloudTrail sucks
+Because CloudTrail sucks and vibecoding is fun
 
 ## Features
 
