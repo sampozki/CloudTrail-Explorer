@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CloudTrail Explorer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="topbar-copy">
+          <h1>CloudTrail Explorer</h1>
+        </div>
+        <div class="upload-row">
+          <label for="fileInput" class="button">Upload CloudTrail JSON</label>
+          <button id="clearBtn" class="button ghost" type="button">Clear</button>
+          <button id="toggleControlsBtn" class="button ghost" type="button">Hide Controls</button>
+        </div>
+      </div>
+      <input id="fileInput" type="file" accept=".json,application/json" />
+    </header>
+    <button id="showControlsFab" class="show-controls-fab" type="button">Show Controls</button>
+
+    <main class="layout" id="layoutRoot">
+      <section class="controls card">
+        <div class="filters-grid">
+          <label class="span-2">
+            Search
+            <input id="searchInput" class="input-large" type="text" placeholder="eventName, user, source, requestId, resources..." />
+          </label>
+          <label class="span-2">
+            Event Source
+            <input id="eventSourceInput" class="input-large" type="text" placeholder="e.g. ec2.amazonaws.com" list="eventSourceSuggestions" />
+          </label>
+          <label class="span-2">
+            Event Name
+            <input id="eventNameInput" class="input-large" type="text" placeholder="e.g. RunInstances" list="eventNameSuggestions" />
+          </label>
+          <label>
+            Username / ARN
+            <input id="usernameInput" type="text" placeholder="e.g. alice, assumed-role/..." list="usernameSuggestions" />
+          </label>
+          <label>
+            Region
+            <input id="regionInput" type="text" placeholder="e.g. eu-west-1" list="regionSuggestions" />
+          </label>
+          <label>
+            Error Only
+            <select id="errorOnlyInput">
+              <option value="all">All</option>
+              <option value="errors">Only errors</option>
+              <option value="success">Only success</option>
+            </select>
+          </label>
+          <label>
+            Page Size
+            <select id="limitInput">
+              <option>50</option>
+              <option selected>100</option>
+              <option>250</option>
+              <option>500</option>
+              <option>1000</option>
+              <option value="all">All</option>
+            </select>
+          </label>
+          <div class="field columns-field">
+            <span class="field-label">Columns</span>
+            <div class="column-toggles">
+              <label><input id="colTime" type="checkbox" checked />Time</label>
+              <label><input id="colSource" type="checkbox" checked />Source</label>
+              <label><input id="colEvent" type="checkbox" checked />Event</label>
+              <label><input id="colUser" type="checkbox" checked />User</label>
+              <label><input id="colRegion" type="checkbox" checked />Region</label>
+              <label><input id="colStatus" type="checkbox" checked />Status</label>
+            </div>
+          </div>
+          <div class="field time-display-field">
+            <span class="field-label">Time Display</span>
+            <div class="time-mode" role="group" aria-label="Time display mode">
+              <button id="timeModeBtn" class="time-mode-btn" type="button" aria-pressed="false">UTC</button>
+            </div>
+          </div>
+          <label>
+            Pane Layout
+            <select id="paneLayoutInput">
+              <option value="side" selected>Left-Right</option>
+              <option value="stack">Up-Down</option>
+            </select>
+          </label>
+          <label>
+            Pane Visibility
+            <select id="paneVisibilityInput">
+              <option value="both" selected>Show both</option>
+              <option value="hide-events">Hide events</option>
+              <option value="hide-details">Hide event details</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="meta-row" id="metaRow">No file loaded.</div>
+      </section>
+
+      <section class="results card">
+        <div class="results-header">
+          <h2>Events</h2>
+          <p id="resultsCount">0 results</p>
+        </div>
+        <div class="table-wrap">
+          <table id="eventsTable">
+            <thead>
+              <tr>
+                <th class="col-time" data-sort="eventTime">Time</th>
+                <th class="col-source" data-sort="eventSource">Source</th>
+                <th class="col-event" data-sort="eventName">Event</th>
+                <th class="col-user" data-sort="userIdentity">User / Principal</th>
+                <th class="col-region" data-sort="awsRegion">Region</th>
+                <th class="col-status" data-sort="errorCode">Status</th>
+              </tr>
+            </thead>
+            <tbody id="eventsBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination-row">
+          <button id="firstPageBtn" class="page-btn" type="button">First</button>
+          <button id="prevPageBtn" class="page-btn" type="button">Prev</button>
+          <span id="pageInfo">Page 1 / 1</span>
+          <button id="nextPageBtn" class="page-btn" type="button">Next</button>
+          <button id="lastPageBtn" class="page-btn" type="button">Last</button>
+        </div>
+      </section>
+
+      <div id="paneSplitter" class="pane-splitter" role="separator" aria-label="Resize panes"></div>
+
+      <section class="details card">
+        <div class="results-header">
+          <h2>Event Details</h2>
+          <p id="detailHint">Select an event</p>
+        </div>
+        <pre id="detailsPanel" class="details-panel">No event selected.</pre>
+      </section>
+    </main>
+
+    <template id="rowTemplate">
+      <tr>
+        <td class="mono time"></td>
+        <td class="mono source"></td>
+        <td class="mono name"></td>
+        <td class="mono user"></td>
+        <td class="mono region"></td>
+        <td class="mono status"></td>
+      </tr>
+    </template>
+
+    <datalist id="eventSourceSuggestions"></datalist>
+    <datalist id="eventNameSuggestions"></datalist>
+    <datalist id="usernameSuggestions"></datalist>
+    <datalist id="regionSuggestions"></datalist>
+
+    <script src="app.js"></script>
+  </body>
+</html>
