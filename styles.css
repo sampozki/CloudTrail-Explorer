@@ -80,6 +80,8 @@ body {
 
 .controls {
   padding: 1rem;
+  overflow: auto;
+  min-height: 0;
 }
 
 .upload-row {
@@ -159,6 +161,7 @@ label {
 
 .columns-field {
   min-width: 260px;
+  grid-column: 1 / -1;
 }
 
 .column-toggles {
@@ -179,7 +182,8 @@ label {
 }
 
 .time-display-field {
-  width: max-content;
+  width: 100%;
+  min-width: 0;
 }
 
 input,
@@ -204,9 +208,31 @@ select {
   }
 }
 
+@media (max-width: 699px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .span-2 {
+    grid-column: span 1;
+  }
+
+  .columns-field {
+    min-width: 0;
+  }
+
+  .time-display-field {
+    width: 100%;
+  }
+
+  .time-mode {
+    width: 100%;
+  }
+}
+
 .time-mode {
   display: inline-flex;
-  width: auto;
+  width: 100%;
   border: 1px solid #0d9488;
   border-radius: 9px;
   overflow: hidden;
@@ -217,13 +243,27 @@ select {
   border: 0;
   background: linear-gradient(180deg, #14b8a6, #0f766e);
   color: #fff;
-  min-width: 118px;
+  min-width: 0;
   text-align: center;
   padding: 0.5rem 0.95rem;
   font: inherit;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
+}
+
+@media (min-width: 700px) {
+  .time-display-field {
+    width: max-content;
+  }
+
+  .time-mode {
+    width: auto;
+  }
+
+  .time-mode-btn {
+    min-width: 118px;
+  }
 }
 
 .time-mode-btn + .time-mode-btn {
@@ -358,6 +398,18 @@ th {
   cursor: pointer;
   user-select: none;
   color: #334155;
+}
+
+th.sorted-asc::after {
+  content: " ▲";
+  color: #0f766e;
+  font-size: 0.72rem;
+}
+
+th.sorted-desc::after {
+  content: " ▼";
+  color: #0f766e;
+  font-size: 0.72rem;
 }
 
 tbody tr {
