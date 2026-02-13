@@ -197,6 +197,14 @@ function applyColumnVisibility() {
   eventsTable.classList.toggle('hide-col-status', !colStatus.checked);
 }
 
+function updateSortIndicators() {
+  headers.forEach((header) => {
+    const isActive = header.dataset.sort === state.sortBy;
+    header.classList.toggle('sorted-asc', isActive && state.sortDir === 'asc');
+    header.classList.toggle('sorted-desc', isActive && state.sortDir === 'desc');
+  });
+}
+
 function fillDatalist(datalist, values, limit = 300) {
   const uniqueSorted = Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
   datalist.innerHTML = '';
@@ -287,6 +295,7 @@ function paginateResults() {
 
 function renderTable() {
   eventsBody.innerHTML = '';
+  updateSortIndicators();
 
   const count = state.pagedEvents.length;
   const total = state.allEvents.length;
